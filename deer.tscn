@@ -1,0 +1,79 @@
+[gd_scene load_steps=8 format=3 uid="uid://dsakide36vjj3"]
+
+[ext_resource type="Texture2D" uid="uid://jjl71p6us5q6" path="res://animals.png" id="1_tqnac"]
+[ext_resource type="Script" path="res://deer.gd" id="1_w6j8n"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hrpax"]
+radius = 162.197
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s5p4o"]
+atlas = ExtResource("1_tqnac")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_yf4hi"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s5p4o")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_b85ge"]
+radius = 14.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1h5y6"]
+radius = 34.0588
+
+[node name="Deer" type="CharacterBody2D" groups=["Deer"]]
+collision_layer = 2
+collision_mask = 63
+script = ExtResource("1_w6j8n")
+
+[node name="FoodSightRange" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FoodSightRange"]
+shape = SubResource("CircleShape2D_hrpax")
+
+[node name="WaterSightRange" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WaterSightRange"]
+shape = SubResource("CircleShape2D_hrpax")
+
+[node name="ShelterSightRange" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ShelterSightRange"]
+shape = SubResource("CircleShape2D_hrpax")
+
+[node name="EntitySightRange" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EntitySightRange"]
+shape = SubResource("CircleShape2D_hrpax")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="EntitySightRange"]
+unique_name_in_owner = true
+position = Vector2(0, -8)
+sprite_frames = SubResource("SpriteFrames_yf4hi")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_b85ge")
+debug_color = Color(0.972549, 0, 0.443137, 0.419608)
+
+[node name="InteractionRange" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionRange"]
+shape = SubResource("CircleShape2D_1h5y6")
+debug_color = Color(0.647059, 0.521569, 0, 0.419608)
+
+[connection signal="body_shape_entered" from="FoodSightRange" to="." method="_on_food_sight_range_body_shape_entered"]
+[connection signal="body_shape_exited" from="FoodSightRange" to="." method="_on_food_sight_range_body_shape_exited"]
+[connection signal="body_shape_entered" from="WaterSightRange" to="." method="_on_water_sight_range_body_shape_entered"]
+[connection signal="body_shape_exited" from="WaterSightRange" to="." method="_on_water_sight_range_body_shape_exited"]
+[connection signal="body_shape_entered" from="ShelterSightRange" to="." method="_on_shelter_sight_range_body_shape_entered"]
+[connection signal="body_shape_exited" from="ShelterSightRange" to="." method="_on_shelter_sight_range_body_shape_exited"]
+[connection signal="body_shape_entered" from="EntitySightRange" to="." method="_on_entity_sight_range_body_shape_entered"]
+[connection signal="body_shape_exited" from="EntitySightRange" to="." method="_on_entity_sight_range_body_shape_exited"]
