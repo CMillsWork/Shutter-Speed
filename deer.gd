@@ -9,7 +9,7 @@ var shelter	: int = 0
 # 0 is good, 1000 is bad. Math was easier in my head for that
 var fear	: int = 0
 
-var speed = 300
+var speed = 100
 var accel = 7
 
 enum state {
@@ -32,13 +32,15 @@ var nearby_water : Array = []
 var nearby_social : Array = []
 var nearby_shelter : Array = []
 
+@onready var wander_timer : Timer = $WanderTimer
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	food = randi_range(0, 1000)
-	water = randi_range(0, 1000)
-	social = randi_range(0, 1000)
-	shelter = randi_range(0, 1000)
-	fear = randi_range(0, 1000)
+	food = randi_range(750, 1000)
+	water = randi_range(750, 1000)
+	social = randi_range(750, 1000)
+	shelter = randi_range(750, 1000)
+	fear = randi_range(750, 1000)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -48,16 +50,16 @@ func _process(delta):
 		fear -= 1 * delta
 	
 	if food > 0:
-		food -= randi_range(0,5) * delta
+		food -= randi_range(0,1) * delta
 	
 	if water > 0:
-		water -= randi_range(0,5) * delta
+		water -= randi_range(0,1) * delta
 	
 	if shelter > 0:
-		shelter -= randi_range(0,5) * delta
+		shelter -= randi_range(0,1) * delta
 	
 	if social > 0:
-		social -= randi_range(0,5) * delta
+		social -= randi_range(0,1) * delta
 	
 	var lowest_stat = min(food, water, social, shelter)
 	
@@ -77,23 +79,18 @@ func _process(delta):
 			sheltering_behavior()
 		else:
 			var current_pos = global_position
-			var search_target = Vector2(current_pos.x + randf_range(0,25), current_pos.y + randf_range(0,50))
+			var search_target = Vector2(current_pos.x + randf_range(-25,25), current_pos.y + randf_range(-25,25))
 			$NavigationAgent2D.target_position = search_target
 			while !$NavigationAgent2D.is_target_reachable:
-				search_target = Vector2(current_pos.x + randf_range(0,25), current_pos.y + randf_range(0,50))
+				search_target = Vector2(current_pos.x + randf_range(-25,25), current_pos.y + randf_range(-25,25))
 				$NavigationAgent2D.target_position = search_target
 
 	elif lowest_stat + fear >= 1000:
 		frightened_behavior()
 	
 	if current_state == state.WANDER:
-		var current_pos = global_position
-		var search_target = Vector2(current_pos.x + randf_range(0,50), current_pos.y + randf_range(0,50))
-		print_debug('wandering to: ', search_target)
-		$NavigationAgent2D.set_target_position(search_target)
-		while !$NavigationAgent2D.is_target_reachable:
-			search_target = Vector2(current_pos.x + randf_range(0,50), current_pos.y + randf_range(0,50))
-			$NavigationAgent2D.set_target_position(search_target)
+		if wander_timer.is_stopped():
+			wander_timer.start(3)
 	
 	$NavigationAgent2D.get_next_path_position()
 	
@@ -113,13 +110,30 @@ func _process(delta):
 	move_and_slide()
 
 
+func wander_behavior():
+	var current_pos = global_position
+	var search_target = Vector2(current_pos.x + randf_range(-50,50), current_pos.y + randf_range(-50,50))
+	#print_debug('wandering to: ', search_target)
+	$NavigationAgent2D.set_target_position(search_target)
+	while !$NavigationAgent2D.is_target_reachable:
+		search_target = Vector2(current_pos.x + randf_range(-50,50), current_pos.y + randf_range(-50,50))
+		$NavigationAgent2D.set_target_position(search_target)
+	
+	if wander_timer.is_stopped():
+		wander_timer.start(3)
+
+
 func hunger_behavior():
 	# if we know where food is, go to the food and start eating
 	# otherwise, wander
+	var random = randi_range(0,50)
+	if food + random >= 100:
+		current_state = state.IDLE
+		return 
 	if nearby_food.size() > 0:
 		current_state = state.HUNGRY
 		var food_size = nearby_food.size()
-		var rand_target = randi_range(0,food_size)
+		var rand_target = randi_range(0,food_size-1)
 		var target : Node2D = nearby_food[rand_target]
 		$NavigationAgent2D.set_target_position(target.global_position)
 		$NavigationAgent2D.get_next_path_position()
@@ -131,10 +145,15 @@ func hunger_behavior():
 func thirst_behavior():
 	# if we know where water is, go to the water 
 	# otherwise, wander
+	var random = randi_range(0,50)
+	if water + random >= 100:
+		current_state = state.IDLE
+		return
+		
 	if nearby_water.size() > 0:
 		current_state = state.THIRSTY
 		var water_size = nearby_water.size()
-		var rand_target = randi_range(0,water_size)
+		var rand_target = randi_range(0,water_size-1)
 		var target : Node2D = nearby_water[rand_target]
 		$NavigationAgent2D.set_target_position(target.global_position)
 		$NavigationAgent2D.get_next_path_position()
@@ -144,10 +163,15 @@ func thirst_behavior():
 
 
 func social_behavior():
+	var random = randi_range(0,50)
+	if social + random >= 100:
+		current_state = state.IDLE
+		return
+		
 	if nearby_social.size() > 0:
 		current_state = state.LONELY
 		var social_size = nearby_social.size()
-		var rand_target = randi_range(0,social_size)
+		var rand_target = randi_range(0,social_size-1)
 		var target : Node2D = nearby_social[rand_target]
 		$NavigationAgent2D.set_target_position(target.global_position)
 		$NavigationAgent2D.get_next_path_position()
@@ -157,10 +181,15 @@ func social_behavior():
 
 
 func sheltering_behavior():
+	var random = randi_range(0,50)
+	if shelter + random >= 100:
+		current_state = state.IDLE
+		return
+	
 	if nearby_shelter.size() > 0:
 		current_state = state.TIRED
-		var shelter = nearby_shelter.size()
-		var rand_target = randi_range(0,shelter)
+		var shelter_size = nearby_shelter.size()
+		var rand_target = randi_range(0,shelter_size-1)
 		var target : Node2D = nearby_shelter[rand_target]
 		$NavigationAgent2D.set_target_position(target.global_position)
 		$NavigationAgent2D.get_next_path_position()
@@ -171,63 +200,5 @@ func sheltering_behavior():
 func frightened_behavior():
 	pass
 
-
-func _on_food_sight_range_body_shape_entered(body_rid, body, body_shape_index, local_shape_index):
-	print_debug('I see nearby_food')
-	var was_empty : bool = nearby_food.size() == 0
-	
-	if body is TileMap:
-		nearby_food.append(body)
-	
-	if current_state == state.WANDER && was_empty && food < 50:
-		current_state = state.IDLE
-
-
-func _on_food_sight_range_body_shape_exited(body_rid, body, body_shape_index, local_shape_index):
-	nearby_food.erase(body)
-
-
-
-func _on_water_sight_range_body_shape_entered(body_rid, body, body_shape_index, local_shape_index):
-	print_debug('I see nearby_water')
-	var was_empty : bool = nearby_water.size() == 0
-	
-	if body is TileMap:
-		nearby_water.append(body)
-	
-	if current_state == state.WANDER && was_empty && water < 50:
-		current_state = state.IDLE
-
-
-func _on_water_sight_range_body_shape_exited(body_rid, body, body_shape_index, local_shape_index):
-	nearby_water.erase(body)
-
-
-func _on_shelter_sight_range_body_shape_entered(body_rid, body, body_shape_index, local_shape_index):
-	print_debug('I see nearby_shelter')
-	var was_empty : bool = nearby_shelter.size() == 0
-	
-	if body is TileMap:
-		nearby_shelter.append(body)
-	
-	if current_state == state.WANDER && was_empty && shelter < 50:
-		current_state = state.IDLE
-
-
-func _on_shelter_sight_range_body_shape_exited(body_rid, body, body_shape_index, local_shape_index):
-	nearby_shelter.erase(body)
-
-
-func _on_entity_sight_range_body_shape_entered(body_rid, body : Node2D, body_shape_index, local_shape_index):
-	print_debug('I see nearby_social')
-	var was_empty : bool = nearby_social.size() == 0
-	
-	if body.is_in_group('Deer'):
-		nearby_social.append(body)
-	
-	if current_state == state.WANDER && was_empty && social < 50:
-		current_state = state.IDLE
-
-
-func _on_entity_sight_range_body_shape_exited(body_rid, body, body_shape_index, local_shape_index):
-	nearby_social.erase(body)
+func _on_wander_timer_timeout():
+	wander_behavior()
