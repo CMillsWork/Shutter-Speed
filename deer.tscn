@@ -1,5 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://dsakide36vjj3"]
+[gd_scene load_steps=7 format=3 uid="uid://dsakide36vjj3"]
 
+[ext_resource type="Texture2D" uid="uid://jjl71p6us5q6" path="res://animals.png" id="1_tqnac"]
 [ext_resource type="Script" path="res://deer.gd" id="1_w6j8n"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_b85ge"]
@@ -7,6 +8,21 @@ radius = 14.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1h5y6"]
 radius = 34.0588
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3ogpd"]
+atlas = ExtResource("1_tqnac")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_llwiw"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3ogpd")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [node name="Deer" type="CharacterBody2D" groups=["Deer"]]
 collision_layer = 2
@@ -16,10 +32,12 @@ script = ExtResource("1_w6j8n")
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -15)
 shape = SubResource("CircleShape2D_b85ge")
 debug_color = Color(0.972549, 0, 0.443137, 0.419608)
 
 [node name="InteractionRange" type="Area2D" parent="."]
+position = Vector2(0, -15)
 collision_layer = 0
 collision_mask = 63
 
@@ -29,5 +47,9 @@ debug_color = Color(0.647059, 0.521569, 0, 0.419608)
 
 [node name="WanderTimer" type="Timer" parent="."]
 one_shot = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -15)
+sprite_frames = SubResource("SpriteFrames_llwiw")
 
 [connection signal="timeout" from="WanderTimer" to="." method="_on_wander_timer_timeout"]

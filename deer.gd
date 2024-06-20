@@ -65,25 +65,25 @@ func _process(delta):
 	
 	if current_state == state.IDLE:
 		# check statuses
-		if food == lowest_stat && lowest_stat < 500:
-			print_debug('Lowest stat is food')
-			hunger_behavior()
-		elif water == lowest_stat && lowest_stat < 500:
-			print_debug('Lowest stat is water')
-			thirst_behavior()
-		elif social == lowest_stat && lowest_stat < 500:
-			print_debug('Lowest stat is social')
-			social_behavior()
-		elif shelter == lowest_stat && lowest_stat < 500:
-			print_debug('Lowest stat is shelter')
-			sheltering_behavior()
-		else:
-			var current_pos = global_position
-			var search_target = Vector2(current_pos.x + randf_range(-25,25), current_pos.y + randf_range(-25,25))
+		#if food == lowest_stat && lowest_stat < 500:
+			#print_debug('Lowest stat is food')
+			#hunger_behavior()
+		#elif water == lowest_stat && lowest_stat < 500:
+			#print_debug('Lowest stat is water')
+			#thirst_behavior()
+		#elif social == lowest_stat && lowest_stat < 500:
+			#print_debug('Lowest stat is social')
+			#social_behavior()
+		#elif shelter == lowest_stat && lowest_stat < 500:
+			#print_debug('Lowest stat is shelter')
+			#sheltering_behavior()
+		#else:
+		var current_pos = global_position
+		var search_target = Vector2(current_pos.x + randf_range(-25,25), current_pos.y + randf_range(-25,25))
+		$NavigationAgent2D.target_position = search_target
+		while !$NavigationAgent2D.is_target_reachable:
+			search_target = Vector2(current_pos.x + randf_range(-25,25), current_pos.y + randf_range(-25,25))
 			$NavigationAgent2D.target_position = search_target
-			while !$NavigationAgent2D.is_target_reachable:
-				search_target = Vector2(current_pos.x + randf_range(-25,25), current_pos.y + randf_range(-25,25))
-				$NavigationAgent2D.target_position = search_target
 
 	elif lowest_stat + fear >= 1000:
 		frightened_behavior()

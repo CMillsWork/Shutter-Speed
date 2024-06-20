@@ -1,8 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://dp4b8m7ncf3v1"]
+[gd_scene load_steps=7 format=3 uid="uid://dp4b8m7ncf3v1"]
 
 [ext_resource type="TileSet" uid="uid://cxa26pon4ps5k" path="res://trees.tres" id="1_ovjbj"]
 [ext_resource type="PackedScene" uid="uid://dsakide36vjj3" path="res://deer.tscn" id="2_4lw56"]
 [ext_resource type="TileSet" uid="uid://c1lrg5jswream" path="res://water.tres" id="2_krjc2"]
+[ext_resource type="PackedScene" uid="uid://dfdxp3om7rrts" path="res://player.tscn" id="4_iwuu1"]
+[ext_resource type="PackedScene" uid="uid://b56e6k51sl0ch" path="res://cursor.tscn" id="5_00dar"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_o7qdo"]
 vertices = PackedVector2Array(776, 495, -619, 489, -619, -418, 776, -423)
@@ -49,3 +51,9 @@ position = Vector2(186, -140)
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("NavigationPolygon_o7qdo")
+
+[node name="Player" parent="." instance=ExtResource("4_iwuu1")]
+position = Vector2(-34, 327)
+
+[node name="Cursor" parent="." instance=ExtResource("5_00dar")]
+position = Vector2(-1312, 114)
