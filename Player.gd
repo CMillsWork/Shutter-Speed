@@ -1,7 +1,19 @@
 extends CharacterBody2D
 
 
-const SPEED = 3000.0
+enum state {
+	GROUND,
+	WATER,
+	BRUSH
+}
+
+const SPEED = 4500.0
+
+var current_state
+
+func _ready():
+	current_state = state.GROUND
+
 
 func _process(delta):
 	
