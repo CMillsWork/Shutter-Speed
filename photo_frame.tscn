@@ -3,13 +3,15 @@
 [ext_resource type="Texture2D" uid="uid://bharkea8t1ie4" path="res://photo_frame.png" id="1_nhh3w"]
 [ext_resource type="Script" path="res://PhotoFrame.gd" id="2_u7tai"]
 
-[node name="PhotoFrame" type="Sprite2D"]
-position = Vector2(50, 50)
+[node name="PhotoFrame" type="TextureRect"]
+offset_right = 100.0
+offset_bottom = 100.0
 texture = ExtResource("1_nhh3w")
 script = ExtResource("2_u7tai")
 
 [node name="PhotoImage" type="TextureRect" parent="."]
-offset_left = -48.0
-offset_top = -48.0
-offset_right = 48.0
-offset_bottom = 16.0
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 98.0
+offset_bottom = 66.0

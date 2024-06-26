@@ -10,6 +10,8 @@ const rect_size = Vector2(96,64)
 var current_state = state.DEFAULT
 var crop_zone:Rect2 = Rect2(Vector2.ZERO, rect_size)
 
+@onready var subView : SubViewportContainer = $SubViewportContainer
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	play("default")
@@ -34,13 +36,20 @@ func _process(_delta):
 		play("take_picture")
 		print_debug("taking picture")
 		
-		var viewport_texture : ViewportTexture = get_viewport().get_texture()
-		var photo : Image = viewport_texture.get_image()
+		$SubViewportContainer/SubViewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+		await RenderingServer.frame_pre_draw
+		await RenderingServer.frame_post_draw
+		var photo : Image = $SubViewportContainer/SubViewport.get_texture().get_image()
+		var texture : ImageTexture = ImageTexture.create_from_image(photo)
+		texture.global_position = get_parent().get_player().global_position
+		texture.visible = true
 		
-		#photo = Image.create_from_data(96, 64, false, photo.get_format(), photo.get_data())
-		photo.blit_rect(photo, crop_zone, Vector2.ZERO)
 		
-		get_parent().add_photo_to_album(photo)
+		$SubViewportContainer/SubViewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+		await RenderingServer.frame_pre_draw
+		await RenderingServer.frame_post_draw
+		
+		get_parent().add_photo_to_album(texture.get_image())
 
 
 func _on_animation_finished():

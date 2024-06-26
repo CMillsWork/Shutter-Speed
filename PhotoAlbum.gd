@@ -31,5 +31,6 @@ func add_photo(photo : Image):
 
 
 func _on_back_button_pressed():
+	print_debug('back pressed')
 	visible = false
 	get_tree().paused = false
