@@ -83,8 +83,6 @@ func _input(event):
 
 
 func _on_photo_rectangle_body_entered(body):
-	print_debug('Body Entered')
-	
 	if body.is_in_group('Deer'):
 		contains_deer = true
 	if body.is_in_group('Rabbit'):
@@ -95,3 +93,16 @@ func _on_photo_rectangle_body_entered(body):
 		contains_player = true
 	if body.is_in_group('Thing'):
 		contains_thing = true
+
+
+func _on_photo_rectangle_body_exited(body):
+	if body.is_in_group('Deer'):
+		contains_deer = false
+	if body.is_in_group('Rabbit'):
+		contains_rabbit = false
+	if body.is_in_group('Bird'):
+		contains_bird = false
+	if body.is_in_group('Player'):
+		contains_player = false
+	if body.is_in_group('Thing'):
+		contains_thing = false

@@ -18,10 +18,36 @@ func _ready():
 		photoImage.texture = photo
 
 func add_subjects(array_subjects):
+	help_text += 'Contains: '
+	var other_subjects : bool = false
 	
+	#contains_deer 
+	if array_subjects[0]:
+		help_text += 'Deer'
+		other_subjects = true
+	# contains_rabbit
+	if array_subjects[1]:
+		if other_subjects:
+			help_text += ', '
+		help_text += 'Rabbit'
+		other_subjects = true
+	# contains_bird
+	if array_subjects[2]:
+		if other_subjects:
+			help_text += ', '
+		help_text += 'Bird'
+		other_subjects = true
+	# contains_player
+	if array_subjects[3]:
+		if other_subjects:
+			help_text += ', '
+		help_text += 'Player'
+		other_subjects = true
+	# contains_thing
+	if array_subjects[4]:
+		if other_subjects:
+			help_text += ', '
+		help_text += 'something terrible'
+		other_subjects = true
 	
-	contains_deer = array_subjects[0]
-	contains_rabbit = array_subjects[1]
-	contains_bird = array_subjects[2]
-	contains_player = array_subjects[3]
-	contains_thing = array_subjects[4]
+	tooltip_text = help_text
