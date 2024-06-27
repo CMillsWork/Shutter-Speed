@@ -11,8 +11,8 @@ func _ready():
 func _process(delta):
 	pass
 
-func add_photo_to_album(photo : Image):
-	album_grid.add_photo(photo)
+func add_photo_to_album(photo : ImageTexture, array_subjects):
+	album_grid.add_photo(photo, array_subjects)
 
 
 func get_player():

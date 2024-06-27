@@ -57,6 +57,7 @@ navigation_polygon = SubResource("NavigationPolygon_o7qdo")
 position = Vector2(400, 300)
 
 [node name="Cursor" parent="." instance=ExtResource("5_00dar")]
+z_index = 10
 position = Vector2(-1312, 114)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]

@@ -9,9 +9,5 @@ offset_bottom = 100.0
 texture = ExtResource("1_nhh3w")
 script = ExtResource("2_u7tai")
 
-[node name="PhotoImage" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = 2.0
-offset_top = 2.0
-offset_right = 98.0
-offset_bottom = 66.0
+[node name="PhotoImage" type="Sprite2D" parent="."]
+position = Vector2(50, 33)

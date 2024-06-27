@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://b56e6k51sl0ch"]
+[gd_scene load_steps=11 format=3 uid="uid://b56e6k51sl0ch"]
 
 [ext_resource type="Texture2D" uid="uid://duvkirlg4vy4v" path="res://cursor.png" id="1_41yei"]
 [ext_resource type="Script" path="res://Cursor.gd" id="2_mj1vi"]
@@ -63,6 +63,9 @@ animations = [{
 "speed": 10.0
 }]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_h2qmd"]
+size = Vector2(96, 64)
+
 [node name="Cursor" type="AnimatedSprite2D"]
 sprite_frames = SubResource("SpriteFrames_mcge1")
 animation = &"take_picture"
@@ -71,6 +74,7 @@ frame_progress = 1.0
 script = ExtResource("2_mj1vi")
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+visible = false
 z_index = -1
 offset_left = -48.0
 offset_top = -32.0
@@ -80,6 +84,22 @@ offset_bottom = 480.0
 [node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
 handle_input_locally = false
 size = Vector2i(96, 64)
-render_target_update_mode = 4
+render_target_update_mode = 0
+
+[node name="PhotoRectangle" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PhotoRectangle"]
+shape = SubResource("RectangleShape2D_h2qmd")
+
+[node name="PhotoBegin" type="Marker2D" parent="."]
+position = Vector2(-48, -32)
+
+[node name="PhotoCenter" type="Marker2D" parent="."]
+
+[node name="PhotoEnd" type="Marker2D" parent="."]
+position = Vector2(48, 32)
 
 [connection signal="animation_finished" from="." to="." method="_on_animation_finished"]
+[connection signal="body_entered" from="PhotoRectangle" to="." method="_on_photo_rectangle_body_entered"]

@@ -24,10 +24,11 @@ func _input(event):
 			get_tree().paused = false
 
 
-func add_photo(photo : Image):
+func add_photo(photo : ImageTexture, array_subjects):
 	photo_album.append(photo)
 	var new_photo = frame_factory.instantiate()
 	$AlbumGrid.add_child(new_photo)
+	new_photo.add_subjects(array_subjects)
 
 
 func _on_back_button_pressed():
