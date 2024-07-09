@@ -24,7 +24,8 @@ enum state {
 	EATING,
 	DRINKING,
 	RESTING,
-	WANDER
+	WANDER,
+	DEAD
 }
 
 var current_state : int = state.WANDER
@@ -46,6 +47,9 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
+	# if dead, don't do anything except lay there
+	if current_state == state.DEAD:
+		return
 	
 	if fear > 0 && current_state != state.FRIGHTENED:
 		fear -= 1 * delta
@@ -150,7 +154,7 @@ func wander_behavior():
 
 
 func hunger_behavior():
-	var nearby_food = get_tree().get_nodes_in_group('FOOD')
+	var nearby_food = get_tree().get_nodes_in_group('Food')
 	
 	if nearby_food.size() > 0:
 		var food_size = nearby_food.size()
@@ -169,7 +173,7 @@ func hunger_behavior():
 func thirst_behavior():
 	# if we know where water is, go to the water 
 	# otherwise, wander
-	var nearby_water = get_tree().get_nodes_in_group('WATER')
+	var nearby_water = get_tree().get_nodes_in_group('Water')
 	
 	if nearby_water.size() > 0:
 		var water_size = nearby_water.size()
@@ -204,7 +208,7 @@ func social_behavior():
 
 
 func sheltering_behavior():
-	var nearby_shelter = get_tree().get_nodes_in_group('SHELTER')
+	var nearby_shelter = get_tree().get_nodes_in_group('Shelter')
 	
 	if nearby_shelter.size() > 0:
 		var shelter_size = nearby_shelter.size()
@@ -247,3 +251,9 @@ func _on_interaction_range_area_entered(area):
 		if current_state == state.TIRED:
 			current_state = state.RESTING
 			current_task = Callable(self, "drinking_behavior")
+
+
+func die():
+	current_state = state.DEAD
+	current_task = func foo(): {}
+	# play animation here

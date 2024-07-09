@@ -1,7 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://dsakide36vjj3"]
+[gd_scene load_steps=20 format=3 uid="uid://dsakide36vjj3"]
 
 [ext_resource type="Texture2D" uid="uid://jjl71p6us5q6" path="res://animals.png" id="1_tqnac"]
-[ext_resource type="Script" path="res://deer.gd" id="1_w6j8n"]
+[ext_resource type="Script" path="res://creature.gd" id="1_xup41"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_b85ge"]
 radius = 14.0
@@ -24,12 +24,88 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="BlackboardPlan" id="BlackboardPlan_6uwqx"]
+var/food/name = &"food"
+var/food/type = 2
+var/food/value = 0
+var/food/hint = 0
+var/food/hint_string = "Hunger of animal"
+var/water/name = &"water"
+var/water/type = 2
+var/water/value = 0
+var/water/hint = 0
+var/water/hint_string = "Thirst of animal"
+var/social/name = &"social"
+var/social/type = 2
+var/social/value = 0
+var/social/hint = 0
+var/social/hint_string = "Social need of animal"
+var/fear/name = &"fear"
+var/fear/type = 2
+var/fear/value = 0
+var/fear/hint = 0
+var/fear/hint_string = "Fear of animal"
+
+[sub_resource type="BTCallMethod" id="BTCallMethod_n6ik3"]
+
+[sub_resource type="BBVariant" id="BBVariant_j0y30"]
+type = 2
+saved_value = 500
+resource_name = "500"
+
+[sub_resource type="BTCheckVar" id="BTCheckVar_g1j1a"]
+variable = &"food"
+check_type = 2
+value = SubResource("BBVariant_j0y30")
+children = [SubResource("BTCallMethod_n6ik3")]
+
+[sub_resource type="BBVariant" id="BBVariant_dxqct"]
+type = 2
+saved_value = 500
+resource_name = "500"
+
+[sub_resource type="BTCheckVar" id="BTCheckVar_p1nkq"]
+variable = &"water"
+check_type = 2
+value = SubResource("BBVariant_dxqct")
+
+[sub_resource type="BBVariant" id="BBVariant_e5d5x"]
+type = 2
+saved_value = 500
+resource_name = "500"
+
+[sub_resource type="BTCheckVar" id="BTCheckVar_d6pmf"]
+variable = &"social"
+check_type = 2
+value = SubResource("BBVariant_e5d5x")
+
+[sub_resource type="BBVariant" id="BBVariant_68hef"]
+type = 2
+saved_value = 500
+resource_name = "500"
+
+[sub_resource type="BTCheckVar" id="BTCheckVar_a1ech"]
+variable = &"fear"
+check_type = 4
+value = SubResource("BBVariant_68hef")
+
+[sub_resource type="BTSelector" id="BTSelector_11dtk"]
+children = [SubResource("BTCheckVar_g1j1a"), SubResource("BTCheckVar_p1nkq"), SubResource("BTCheckVar_d6pmf"), SubResource("BTCheckVar_a1ech")]
+
+[sub_resource type="BehaviorTree" id="BehaviorTree_67gyk"]
+description = "Behaviors for deer"
+blackboard_plan = SubResource("BlackboardPlan_6uwqx")
+root_task = SubResource("BTSelector_11dtk")
+
+[sub_resource type="BlackboardPlan" id="BlackboardPlan_ic5bu"]
+
 [node name="Deer" type="CharacterBody2D" groups=["Deer"]]
 collision_layer = 2
-collision_mask = 2
-script = ExtResource("1_w6j8n")
+collision_mask = 31
+script = ExtResource("1_xup41")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+navigation_layers = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -15)
@@ -45,11 +121,16 @@ collision_mask = 63
 shape = SubResource("CircleShape2D_1h5y6")
 debug_color = Color(0.647059, 0.521569, 0, 0.419608)
 
-[node name="WanderTimer" type="Timer" parent="."]
+[node name="BehaviorTimer" type="Timer" parent="."]
 one_shot = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -15)
 sprite_frames = SubResource("SpriteFrames_llwiw")
 
-[connection signal="timeout" from="WanderTimer" to="." method="_on_wander_timer_timeout"]
+[node name="BTPlayer" type="BTPlayer" parent="."]
+behavior_tree = SubResource("BehaviorTree_67gyk")
+blackboard_plan = SubResource("BlackboardPlan_ic5bu")
+
+[connection signal="area_entered" from="InteractionRange" to="." method="_on_interaction_range_area_entered"]
+[connection signal="timeout" from="BehaviorTimer" to="." method="_on_behavior_timer_timeout"]

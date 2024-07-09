@@ -10,4 +10,4 @@ texture = ExtResource("1_nhh3w")
 script = ExtResource("2_u7tai")
 
 [node name="PhotoImage" type="Sprite2D" parent="."]
-position = Vector2(50, 33)
+position = Vector2(50, 34)
